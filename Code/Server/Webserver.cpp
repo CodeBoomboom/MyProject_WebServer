@@ -228,7 +228,13 @@ void Webserver::DealListen()
 void Webserver::AddClient(int fd, sockaddr_in addr)
 {
     //添加HttpConn对象
+    m_users[fd].Init(fd,addr);//初始化为HttpConn对象，键为文件描述符，值为HttpConn对象
 
+    //添加定时器
+    // if(timeoutMS_ > 0) {//timeoutMS_定时器超时时间
+    //     // 添加到定时器对象中，当检测到超时时执行CloseConn_函数进行关闭连接
+    //     timer_->add(fd, timeoutMS_, std::bind(&WebServer::CloseConn_, this, &users_[fd]));
+    // }
 
     //挂到m_epoller上
     m_epoller->AddFd(fd, EPOLLIN | m_connEvent);

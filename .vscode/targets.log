@@ -8,7 +8,7 @@ make: *** No rule to make target 'all'.  Stop.
 # This is free software: you are free to change and redistribute it.
 # There is NO WARRANTY, to the extent permitted by law.
 
-# Make data base, printed on Sun May 29 13:57:56 2022
+# Make data base, printed on Mon May 30 22:16:55 2022
 
 # Variables
 
@@ -53,7 +53,7 @@ LESSOPEN = | /usr/bin/lesspipe %s
 # environment
 VSCODE_CWD = /home/xiaodexin
 # environment
-SSH_CONNECTION = 192.168.246.1 51112 192.168.246.129 22
+SSH_CONNECTION = 192.168.246.1 50626 192.168.246.129 22
 # environment
 PATH = /home/xiaodexin/.vscode-server/bin/c3511e6c69bb39013c4a4b7b9566ec1ca73fc4d5/bin/remote-cli:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/usr/local/git/bin
 # environment
@@ -71,7 +71,7 @@ VSCODE_PIPE_LOGGING = true
 # environment
 PWD = /home/xiaodexin/桌面/MyProject_WebServer
 # environment
-VSCODE_IPC_HOOK_CLI = /run/user/1000/vscode-ipc-60c25d43-819e-4536-8b48-b902dd57119c.sock
+VSCODE_IPC_HOOK_CLI = /run/user/1000/vscode-ipc-1ad24750-42f8-43b4-b70d-bc4bc88432c4.sock
 # automatic
 *D = $(patsubst %/,%,$(dir $*))
 # environment
@@ -121,7 +121,7 @@ MAKEFLAGS = pqrR
 # environment
 MFLAGS = -pqrR
 # environment
-SSH_CLIENT = 192.168.246.1 51112 22
+SSH_CLIENT = 192.168.246.1 50626 22
 # environment
 MAIL = /var/mail/xiaodexin
 # automatic
@@ -159,9 +159,9 @@ VSCODE_EXTHOST_WILL_SEND_SOCKET = true
 
 # Directories
 
-# . (device 2049, inode 550981): 10 files, no impossibilities.
+# . (device 2049, inode 550981): 11 files, no impossibilities.
 
-# 10 files, no impossibilities in 1 directories.
+# 11 files, no impossibilities in 1 directories.
 
 # Implicit Rules
 
@@ -205,12 +205,12 @@ Makefile:
 
 # No general ('VPATH' variable) search path.
 
-# strcache buffers: 1 (0) / strings = 16 / storage = 121 B / avg = 7 B
-# current buf: size = 8162 B / used = 121 B / count = 16 / avg = 7 B
+# strcache buffers: 1 (0) / strings = 17 / storage = 125 B / avg = 7 B
+# current buf: size = 8162 B / used = 125 B / count = 17 / avg = 7 B
 
-# strcache performance: lookups = 21 / hit rate = 23%
+# strcache performance: lookups = 22 / hit rate = 22%
 # hash-table stats:
-# Load=16/8192=0%, Rehash=0, Collisions=1/21=5%
-# Finished Make data base on Sun May 29 13:57:56 2022
+# Load=17/8192=0%, Rehash=0, Collisions=1/22=5%
+# Finished Make data base on Mon May 30 22:16:55 2022
 
  

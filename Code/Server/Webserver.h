@@ -50,6 +50,7 @@ private:
     uint32_t m_connEvent;//连接客户端描述符事件
 
     std::unique_ptr<Epoller> m_epoller;//epoll对象
+    std::unordered_map<int, HttpConn> m_users;//保存的是客户端连接的信息，键为文件描述符，值为HttpConn对象
 
     void InitEventMode(int triMode);
     bool InitSocket();
