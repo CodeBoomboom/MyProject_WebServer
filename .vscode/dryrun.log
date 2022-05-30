@@ -1,0 +1,6 @@
+make --dry-run --always-make --keep-going --print-directory
+make: Entering directory '/home/xiaodexin/桌面/MyProject_WebServer'
+mkdir -p bin
+cd Build && make
+make: Leaving directory '/home/xiaodexin/桌面/MyProject_WebServer'
+ 

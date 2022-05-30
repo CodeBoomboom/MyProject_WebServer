@@ -4,11 +4,13 @@ Webserver::Webserver(
         int port, int triMode, int timeoutMS, bool OptLinger,
         int sqlport, const char* sqlUser, const char* sqlPwd,
         const char* dbName, int connPoolNum, int threadNum,
-        bool openLog, int logLevel, int logQueSize)
+        bool openLog, int logLevel, int logQueSize):
+        m_port(port), m_openLinger(OptLinger), m_timeoutMs(timeoutMS), m_isClose(false),
+        m_epoller(new Epoller())
 {
-    m_srcDir = getcwd(nullptr, 256);
+    m_srcDir = getcwd(nullptr, 256);// 获取当前的工作路径,当前目录是/home/xiaodexin/桌面/MyProject_WebServer，也就是说只能bin/server来执行
 
-    strncat(m_srcDir, "/Resources",16);
+    strncat(m_srcDir, "/Resources",16);// 拼接资源路径,/home/xiaodexin/桌面/MyProject_WebServer/Resources
 
     HttpConn::m_userCount = 0;
     HttpConn::m_srcDir = m_srcDir;
@@ -28,6 +30,14 @@ Webserver::Webserver(
         //初始化日志相关信息
 
     }
+    std::cout<<"create server success"<<std::endl;
+}
+
+Webserver::~Webserver()
+{
+    close(m_listenFd);
+    m_isClose = true;
+    free(m_srcDir);
 
 }
 
@@ -37,6 +47,39 @@ Webserver::Webserver(
 //返回值:None
 void Webserver::Start(){
 
+    int timeMS = -1;  /* epoll wait timeout == -1 无事件将阻塞 */
+
+    if(!m_isClose){
+        std::cout<<"start"<<std::endl;
+    }
+
+    while(!m_isClose){
+
+        // timeMS是最先要超时的连接的超时的时间，传递到epoll_wait()函数中
+        // 当timeMS时间内有事件发生，epoll_wait()返回，否则等到了timeMS时间后才返回
+        // 这样做的目的是为了让epoll_wait()调用次数变少，提高效率
+        int eventCnt = m_epoller->Wait(timeMS);//返回产生事件的文件描述符个数
+
+        //循环处理每一个事件
+        for(int i = 0; i < eventCnt; i++){
+            //处理事件
+            int fd = m_epoller->GetEventFd(i);//获取事件对应的fd
+            uint32_t events = m_epoller->GetEvents(i);//获取事件类型
+
+            //监听文件描述符有事件发生，说明有新的连接连进来
+            if(fd == m_listenFd){
+                DealListen();
+            }
+
+
+
+
+
+        }
+
+
+    }
+    
 
 
 }
@@ -99,7 +142,8 @@ bool Webserver::InitSocket(){
         return false;
     }
 
-    ret = setsockopt(m_listenFd, SOL_SOCKET, SO_LINGER, &m_openLinger, sizeof(m_openLinger));
+    //优雅关闭相关
+    ret = setsockopt(m_listenFd, SOL_SOCKET, SO_LINGER, &optLinger, sizeof(optLinger));
     if(ret < 0) {
         close(m_listenFd);
         std::cout<<"set linger error"<<std::endl;
@@ -135,9 +179,10 @@ bool Webserver::InitSocket(){
     }
 
     //添加到epoll树上
-    ret = epoller_->AddFd(m_listenFd,  m_listenFd | EPOLLIN);
+    ret = m_epoller->AddFd(m_listenFd,  m_listenFd | EPOLLIN);
     if(ret == 0) {
         //LOG_ERROR("Add listen error!");
+        std::cout<<"add listen error"<<std::endl;
         close(m_listenFd);
         return false;
     }
@@ -147,9 +192,49 @@ bool Webserver::InitSocket(){
     return true;
 }
 
+//设置文件描述符非阻塞
+//参数:文件描述符
+//返回值:成功返回文件描述符失败-1
+int Webserver::SetFdNonblock(int fd)
+{
+    return fcntl(fd, F_SETFL, fcntl(fd, F_GETFD, 0) | O_NONBLOCK);
+}
 
 
+//m_ListenFd上有事件发生，即有新客户端连接，处理新连接进来的客户端，将其挂到m_epollfd
+//参数:无
+//返回值:无
+void Webserver::DealListen()
+{
+    struct sockaddr_in  addr;//保存新连接金来的客户端信息
+    socklen_t len = sizeof(addr);
 
+    // 如果监听文件描述符设置的是 ET模式，则需要循环把所有连接处理了
+    do{
+        int fd = accept(m_listenFd, (struct sockaddr *)&addr, &len);
+        if(fd < 0) {return;}
+        else if(HttpConn::m_userCount >= MAX_FD){
+            std::cout<<"HttpConn::m_userCount >= MAX_FD"<<std::endl;
+            return;
+        }
+        AddClient(fd, addr);//添加客户端
+    } while (m_listenFd & EPOLLET);
+}
+
+
+//添加客户端
+//参数:fd：添加的客户端fd，addr：fd要监听的事件
+//返回值:无
+void Webserver::AddClient(int fd, sockaddr_in addr)
+{
+    //添加HttpConn对象
+
+
+    //挂到m_epoller上
+    m_epoller->AddFd(fd, EPOLLIN | m_connEvent);
+    SetFdNonblock(fd);
+    std::cout<<"已将新客户端加到epoll上"<<std::endl;
+}
 
 
 

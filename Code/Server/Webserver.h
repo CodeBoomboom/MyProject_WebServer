@@ -19,7 +19,7 @@
 #include<netinet/in.h>
 #include<arpa/inet.h>
 #include<iostream>
-
+#include<memory>//unique_ptr
 
 #include"../Http/HttpConn.h"
 #include"Epoller.h"
@@ -37,18 +37,28 @@ public:
     void Start();
 
 private:
-    int m_port;
-    bool m_openLinger;
-    int m_timeoutMs;
-    bool m_isClose;
-    int m_listenFd;
-    char* m_srcDir;
+    static const int MAX_FD = 65536;    // 最大的文件描述符的个数
 
-    uint32_t m_listenEvent;
-    uint32_t m_connEvent;
+    int m_port;//端口
+    bool m_openLinger;//优雅关闭
+    int m_timeoutMs;//延时时间
+    bool m_isClose;//服务器关闭
+    int m_listenFd;//监听描述符
+    char* m_srcDir;//资源目录
+
+    uint32_t m_listenEvent;//监听描述符事件
+    uint32_t m_connEvent;//连接客户端描述符事件
+
+    std::unique_ptr<Epoller> m_epoller;//epoll对象
 
     void InitEventMode(int triMode);
     bool InitSocket();
+    void AddClient(int fd, sockaddr_in addr);
+
+
+    int SetFdNonblock(int fd);// 设置文件描述符非阻塞
+
+    void DealListen();
 
 
 
