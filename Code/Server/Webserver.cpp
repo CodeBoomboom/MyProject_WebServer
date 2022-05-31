@@ -70,6 +70,14 @@ void Webserver::Start(){
             if(fd == m_listenFd){
                 DealListen();
             }
+            else if(events & (EPOLLRDHUP | EPOLLHUP | EPOLLERR))//错误的一些情况
+            {
+                CloseClient(&m_users[fd]);
+            }
+            else if(events & EPOLLIN)    //有数据到达，需要读
+            {
+                DealRead(&m_users[fd]);//处理读操作
+            }
 
 
 
@@ -221,12 +229,21 @@ void Webserver::DealListen()
     } while (m_listenFd & EPOLLET);
 }
 
+//当客户端上有数据时处理读操作，读取数据
+//参数:客户端HttpConn对象
+//返回值:无
+void Webserver::DealRead(HttpConn* client){
+    //ExtentTime_(client);   // 延长这个客户端的超时时间
+    // 加入到队列中等待线程池中的线程处理（读取数据）
+    
+}
 
 //添加客户端
 //参数:fd：添加的客户端fd，addr：fd要监听的事件
 //返回值:无
 void Webserver::AddClient(int fd, sockaddr_in addr)
 {
+    std::cout<<"new client socketfd:"<<fd<<std::endl;
     //添加HttpConn对象
     m_users[fd].Init(fd,addr);//初始化为HttpConn对象，键为文件描述符，值为HttpConn对象
 
@@ -239,11 +256,16 @@ void Webserver::AddClient(int fd, sockaddr_in addr)
     //挂到m_epoller上
     m_epoller->AddFd(fd, EPOLLIN | m_connEvent);
     SetFdNonblock(fd);
-    std::cout<<"已将新客户端加到epoll上"<<std::endl;
+    std::cout<<"已将该客户端加到epoll上"<<std::endl;
 }
 
 
-
+void Webserver::CloseClient(HttpConn* client)
+{
+    //LOG_INFO("Client[%d] quit!", client->GetFd());
+    m_epoller->DelFd(client->GetFd());//从epoll树上摘下
+    client->Close();
+}
 
 
 

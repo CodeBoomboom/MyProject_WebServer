@@ -55,11 +55,15 @@ private:
     void InitEventMode(int triMode);
     bool InitSocket();
     void AddClient(int fd, sockaddr_in addr);
-
+    void CloseClient(HttpConn* client);
 
     int SetFdNonblock(int fd);// 设置文件描述符非阻塞
 
     void DealListen();
+    void DealRead(HttpConn* cilent);
+    void DealWrite(HttpConn* client);
+
+
 
 
 

@@ -33,6 +33,7 @@
         "typeinfo": "cpp",
         "utility": "cpp",
         "memory": "cpp",
-        "atomic": "cpp"
+        "atomic": "cpp",
+        "cstring": "cpp"
     }
 }

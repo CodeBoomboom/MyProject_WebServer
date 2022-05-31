@@ -31,6 +31,9 @@ public:
 
     void Init(int sockFd, const sockaddr_in& addr);
 
+    int GetFd() const;
+    struct sockaddr_in GetAddr() const;
+
     static const char* m_srcDir;//资源目录
     static int m_userCount; // 总共的客户端的连接数
     static bool m_isET;//是否是ET模式

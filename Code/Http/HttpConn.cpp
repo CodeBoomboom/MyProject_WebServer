@@ -40,6 +40,14 @@ void HttpConn::Init(int sockFd, const sockaddr_in& addr)
     m_writeBuff.RetrieveAll();
 
     m_isClose = false;
-    std::cout<<"new client!"<<std::endl;
+    std::cout<<"已创建该客户端的HttpConn对象"<<std::endl;
     //LOG_INFO("Client[%d](%s:%d) in, userCount:%d", fd_, GetIP(), GetPort(), (int)userCount);
+}
+
+int HttpConn::GetFd() const {
+    return m_fd;
+};
+
+struct sockaddr_in HttpConn::GetAddr() const{
+    return m_addr;
 }
