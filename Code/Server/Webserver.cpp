@@ -235,6 +235,7 @@ void Webserver::DealListen()
 void Webserver::DealRead(HttpConn* client){
     //ExtentTime_(client);   // 延长这个客户端的超时时间
     // 加入到队列中等待线程池中的线程处理（读取数据）
+    m_threadpool->AddTask(std::bind(&Webserver::OnRead, this, client));//std::bind:位于function文件中，是一个函数适配器，接受一个可调用对象。参1：函数名，参2：右值引用？，参3：函数参数
     
 }
 
@@ -267,7 +268,13 @@ void Webserver::CloseClient(HttpConn* client)
     client->Close();
 }
 
+//子线程处理函数，读取客户端数据
+//这个方法是在子线程中执行的（读取数据），Reactor模式
+//参数:客户端
+//返回值:无
+void Webserver::OnRead(HttpConn* client){
+    
 
-
+}
 
 

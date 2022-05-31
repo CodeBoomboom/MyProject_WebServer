@@ -23,6 +23,7 @@
 
 #include"../Http/HttpConn.h"
 #include"Epoller.h"
+#include"../Pool/ThreadPool.h"
 
 
 class Webserver{
@@ -49,6 +50,7 @@ private:
     uint32_t m_listenEvent;//监听描述符事件
     uint32_t m_connEvent;//连接客户端描述符事件
 
+    std::unique_ptr<ThreadPool> m_threadpool;//线程池
     std::unique_ptr<Epoller> m_epoller;//epoll对象
     std::unordered_map<int, HttpConn> m_users;//保存的是客户端连接的信息，键为文件描述符，值为HttpConn对象
 
@@ -62,6 +64,8 @@ private:
     void DealListen();
     void DealRead(HttpConn* cilent);
     void DealWrite(HttpConn* client);
+
+    void OnRead(HttpConn* client);
 
 
 

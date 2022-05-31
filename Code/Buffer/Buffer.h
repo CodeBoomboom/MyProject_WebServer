@@ -23,12 +23,18 @@ private:
     std::atomic<std::size_t> m_readPos;// 读的位置
     std::atomic<std::size_t> m_writePos;// 写的位置
     
+    char* BeginPtr();   //获取内存起始位置
+    const char* BeginPtr() const;//获取内存起始位置，重载
+    void MakeSpace(size_t len);//创建空间
     
 public:
     Buffer(int initBufferSize = 1024);
     ~Buffer() = default;
 
     void RetrieveAll();
+
+    ssize_t ReadFd(int fd, int* Errno);
+    ssize_t WriteFd(int fd, int* Errno);
 };
 
 

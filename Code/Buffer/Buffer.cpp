@@ -12,3 +12,14 @@ void Buffer::RetrieveAll() {
     m_readPos = 0;
     m_writePos = 0;
 }
+
+
+
+//读取fd中的数据，存储在m_buffer中
+//参数:fd
+//返回值:传出参数Errno
+ssize_t Buffer::ReadFd(int fd, int* Errno){
+
+
+
+}
