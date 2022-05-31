@@ -12,9 +12,9 @@
 #include<cstring>
 #include<vector>
 #include<atomic>
-//#include<iostream>
-//#include<unistd.h>
-//#include<sys/uio.h>
+#include<iostream>
+#include<unistd.h>
+#include<sys/uio.h>
 class Buffer
 {
 private:
@@ -32,6 +32,7 @@ public:
     ~Buffer() = default;
 
     void RetrieveAll();
+    size_t Buffer::WritableBytes() const;
 
     ssize_t ReadFd(int fd, int* Errno);
     ssize_t WriteFd(int fd, int* Errno);
