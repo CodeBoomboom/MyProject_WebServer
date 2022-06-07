@@ -65,12 +65,12 @@ private:
     void DealRead(HttpConn* cilent);
     void DealWrite(HttpConn* client);
 
-    void OnRead(HttpConn* client);
-
-
-
-
-
+    void OnRead(HttpConn* client);//读客户端数据，实际是调用HttpConn成员函数read
+    void OnWrite(HttpConn* client);//写客户端，实际是调用HttpConn成员函数write
+    void OnProcess(HttpConn* client);//解析数据/生成响应，实际是调用HttpConn成员函数process
+    
+    void SendError(int fd, const char*info);//发送错误信息
+    void ExtentTime(HttpConn* client);//延长客户端的超时时间（定时器相关）
 
 };
 

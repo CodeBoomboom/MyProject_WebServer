@@ -35,6 +35,13 @@
         "memory": "cpp",
         "atomic": "cpp",
         "cstring": "cpp",
-        "thread": "cpp"
+        "thread": "cpp",
+        "chrono": "cpp",
+        "condition_variable": "cpp",
+        "ctime": "cpp",
+        "deque": "cpp",
+        "functional": "cpp",
+        "mutex": "cpp",
+        "ratio": "cpp"
     }
 }

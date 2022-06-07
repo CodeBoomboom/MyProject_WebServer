@@ -72,10 +72,12 @@ void Webserver::Start(){
             }
             else if(events & (EPOLLRDHUP | EPOLLHUP | EPOLLERR))//错误的一些情况
             {
+                std::cout<<"events error"<<std::endl;
                 CloseClient(&m_users[fd]);
             }
             else if(events & EPOLLIN)    //有数据到达，需要读
             {
+                std::cout<<"客户端有数据到达，要读，客户端fd:"<<fd<<std::endl;
                 DealRead(&m_users[fd]);//处理读操作
             }
 
@@ -235,6 +237,7 @@ void Webserver::DealListen()
 void Webserver::DealRead(HttpConn* client){
     //ExtentTime_(client);   // 延长这个客户端的超时时间
     // 加入到队列中等待线程池中的线程处理（读取数据）
+    std::cout<<"加入到队列中等待线程池中的线程处理（读取数据）"<<std::endl;
     m_threadpool->AddTask(std::bind(&Webserver::OnRead, this, client));//std::bind:位于function文件中，是一个函数适配器，接受一个可调用对象。参1：函数名，参2：右值引用？，参3：函数参数
     
 }
@@ -273,8 +276,23 @@ void Webserver::CloseClient(HttpConn* client)
 //参数:客户端
 //返回值:无
 void Webserver::OnRead(HttpConn* client){
-    
-
+    int ret = -1;
+    int readErrno = 0;
+    std::cout<<"read data..."<<std::endl;
+    ret = client->read(&readErrno);//读客户端数据
+    if(ret <= 0 && readErrno != EAGAIN){
+        std::cout<<"read error"<<std::endl;
+        CloseClient(client);
+        return;
+    }
+    // 业务逻辑的处理（解析请求+生成响应）
+    OnProcess(client);
 }
 
+
+
+void Webserver::OnProcess(HttpConn* client)
+{
+
+}
 
