@@ -42,6 +42,9 @@
         "deque": "cpp",
         "functional": "cpp",
         "mutex": "cpp",
-        "ratio": "cpp"
+        "ratio": "cpp",
+        "bitset": "cpp",
+        "unordered_set": "cpp",
+        "queue": "cpp"
     }
 }
