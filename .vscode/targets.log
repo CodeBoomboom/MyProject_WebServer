@@ -8,7 +8,7 @@ make: *** No rule to make target 'all'.  Stop.
 # This is free software: you are free to change and redistribute it.
 # There is NO WARRANTY, to the extent permitted by law.
 
-# Make data base, printed on Thu Jun  9 19:31:35 2022
+# Make data base, printed on Sun Jun 12 15:08:03 2022
 
 # Variables
 
@@ -53,7 +53,7 @@ LESSOPEN = | /usr/bin/lesspipe %s
 # environment
 VSCODE_CWD = /home/xiaodexin
 # environment
-SSH_CONNECTION = 192.168.246.1 50716 192.168.246.129 22
+SSH_CONNECTION = 192.168.246.1 51556 192.168.246.129 22
 # environment
 PATH = /home/xiaodexin/.vscode-server/bin/c3511e6c69bb39013c4a4b7b9566ec1ca73fc4d5/bin/remote-cli:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/usr/local/git/bin
 # environment
@@ -71,7 +71,7 @@ VSCODE_PIPE_LOGGING = true
 # environment
 PWD = /home/xiaodexin/桌面/MyProject_WebServer
 # environment
-VSCODE_IPC_HOOK_CLI = /run/user/1000/vscode-ipc-06e05ef7-3476-4c47-ad20-78adba52ac6d.sock
+VSCODE_IPC_HOOK_CLI = /run/user/1000/vscode-ipc-179df8f3-7073-49cf-8a94-1c52f9fbf4d7.sock
 # automatic
 *D = $(patsubst %/,%,$(dir $*))
 # environment
@@ -121,7 +121,7 @@ MAKEFLAGS = pqrR
 # environment
 MFLAGS = -pqrR
 # environment
-SSH_CLIENT = 192.168.246.1 50716 22
+SSH_CLIENT = 192.168.246.1 51556 22
 # environment
 MAIL = /var/mail/xiaodexin
 # automatic
@@ -211,6 +211,6 @@ Makefile:
 # strcache performance: lookups = 22 / hit rate = 22%
 # hash-table stats:
 # Load=17/8192=0%, Rehash=0, Collisions=1/22=5%
-# Finished Make data base on Thu Jun  9 19:31:35 2022
+# Finished Make data base on Sun Jun 12 15:08:03 2022
 
  
