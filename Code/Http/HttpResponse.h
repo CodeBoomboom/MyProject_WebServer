@@ -31,12 +31,12 @@ public:
     void ErrorContent(Buffer& buff, std::string message);
     int Code() const { return m_code; }
 private:
-    void AddStateLine_(Buffer &buff);
-    void AddHeader_(Buffer &buff);
-    void AddContent_(Buffer &buff);
+    void AddStateLine(Buffer &buff);
+    void AddHeader(Buffer &buff);
+    void AddContent(Buffer &buff);
 
-    void ErrorHtml_();
-    std::string GetFileType_();
+    void ErrorHtml();
+    std::string GetFileType();
 
 
 

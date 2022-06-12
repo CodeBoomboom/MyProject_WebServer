@@ -67,3 +67,42 @@ void HttpResponse::Init(const string& srcDir, string& path, bool isKeepAlive, in
     m_mmFile = nullptr;
     m_mmFileStat = { 0 };
 }
+
+//生成响应信息
+//参数:无
+//返回值:无
+void HttpResponse::MakeResponse(Buffer& buff) {
+    /* 判断请求的资源文件 */
+    // index.html
+    // /home/nowcoder/WebServer-master/resources/index.html
+    if(stat((m_srcDir + m_path).data(), &m_mmFileStat) < 0 || S_ISDIR(m_mmFileStat.st_mode)) {
+        m_code = 404;
+    }
+    else if(!(m_mmFileStat.st_mode & S_IROTH)) {
+        //无权限
+        m_code = 403;
+    }
+    else if(m_code == -1) { 
+        m_code = 200; 
+    }
+    ErrorHtml();//若code_为40X则将path_置为对应的路径
+    AddStateLine(buff);//依次往buff(实际就是writeBuff_)中添加响应行、头、体
+    AddHeader(buff);
+    AddContent(buff);
+}
+
+//若m_code是40x则将m_path置为对应的路径
+//参数:无
+//返回值:无
+void HttpResponse::ErrorHtml() {
+    if(CODE_PATH.count(m_code) == 1) {
+        m_path = CODE_PATH.find(m_code)->second;
+        stat((m_srcDir + m_path).data(), &m_mmFileStat);
+    }
+}
+
+
+
+
+
+
