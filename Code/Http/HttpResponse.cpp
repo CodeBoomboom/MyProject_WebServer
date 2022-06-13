@@ -91,6 +91,14 @@ void HttpResponse::MakeResponse(Buffer& buff) {
     AddContent(buff);
 }
 
+char* HttpResponse::File() {
+    return m_mmFile;
+}
+
+size_t HttpResponse::FileLen() const {
+    return m_mmFileStat.st_size;
+}
+
 //若m_code是40x则将m_path置为对应的路径
 //参数:无
 //返回值:无
@@ -101,7 +109,18 @@ void HttpResponse::ErrorHtml() {
     }
 }
 
-
+// 添加响应状态行
+void HttpResponse::AddStateLine(Buffer& buff) {
+    string status;
+    if(CODE_STATUS.count(m_code) == 1) {
+        status = CODE_STATUS.find(m_code)->second;
+    }
+    else {
+        m_code = 400;
+        status = CODE_STATUS.find(400)->second;
+    }
+    buff.Append("HTTP/1.1 " + to_string(m_code) + " " + status + "\r\n");
+}
 
 
 
