@@ -122,6 +122,80 @@ void HttpResponse::AddStateLine(Buffer& buff) {
     buff.Append("HTTP/1.1 " + to_string(m_code) + " " + status + "\r\n");
 }
 
+// 添加响应头
+void HttpResponse::AddHeader(Buffer& buff) {
+    buff.Append("Connection: ");
+    if(m_isKeepAlive) {
+        buff.Append("keep-alive\r\n");
+        buff.Append("keep-alive: max=6, timeout=120\r\n");
+    } else{
+        buff.Append("close\r\n");
+    }
+    buff.Append("Content-type: " + GetFileType() + "\r\n");
+}
+
+// 添加响应体
+//这个函数实际只向writeBuff_中添加了Content-length:
+//实际的文件内容是mmap到了mmFile_
+//最终是在httpconn中用分散写把writeBuff_和mmFile_依次写给客户端
+void HttpResponse::AddContent(Buffer& buff) {
+    int srcFd = open((m_srcDir + m_path).data(), O_RDONLY);
+    if(srcFd < 0) { 
+        ErrorContent(buff, "File NotFound!");
+        return; 
+    }
+
+    /* 将文件映射到内存提高文件的访问速度 
+        MAP_PRIVATE 建立一个写入时拷贝的私有映射*/
+    //LOG_DEBUG("file path %s", (srcDir_ + path_).data());
+    int* mmRet = (int*)mmap(0, m_mmFileStat.st_size, PROT_READ, MAP_PRIVATE, srcFd, 0);
+    if(*mmRet == -1) {
+        ErrorContent(buff, "File NotFound!");
+        return; 
+    }
+    m_mmFile = (char*)mmRet;
+    close(srcFd);
+    buff.Append("Content-length: " + to_string(m_mmFileStat.st_size) + "\r\n\r\n");
+}
+
+string HttpResponse::GetFileType() {
+    /* 判断文件类型 */
+    string::size_type idx = m_path.find_last_of('.');//find_last_of：从后往前找匹配的字符，如果path_中不存在'.'，则返回string::npos，成功返回位置
+    if(idx == string::npos) {
+        return "text/plain";//纯文本
+    }
+    string suffix = m_path.substr(idx);//返回以path_中以idx下标为起始的string
+    if(SUFFIX_TYPE.count(suffix) == 1) {
+        return SUFFIX_TYPE.find(suffix)->second;
+    }
+    return "text/plain";
+}
+
+// 解除内存映射
+void HttpResponse::UnmapFile() {
+    if(m_mmFile) {
+        munmap(m_mmFile, m_mmFileStat.st_size);
+        m_mmFile = nullptr;
+    }
+}
 
 
+//这个函数其实就是用html语言写了一个未找到文件的错误界面
+void HttpResponse::ErrorContent(Buffer& buff, string message) 
+{
+    string body;
+    string status;
+    body += "<html><title>Error</title>";
+    body += "<body bgcolor=\"ffffff\">";
+    if(CODE_STATUS.count(m_code) == 1) {
+        status = CODE_STATUS.find(m_code)->second;
+    } else {
+        status = "Bad Request";
+    }
+    body += to_string(m_code) + " : " + status  + "\n";
+    body += "<p>" + message + "</p>";
+    body += "<hr><em>TinyWebServer</em></body></html>";
 
+    buff.Append("Content-length: " + to_string(body.size()) + "\r\n\r\n");
+    buff.Append(body);
+}
