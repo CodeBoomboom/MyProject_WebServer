@@ -46,3 +46,57 @@
 2022-06-14 21:31:06.221145 [info] : Client[22](192.168.246.1:37088) in, userCount:5
 2022-06-14 21:31:06.221324 [info] : Client[22] in!
 2022-06-14 21:31:06.221390 [info] : Client[23](192.168.246.1:37344) in, userCount:6
+2022-06-14 21:36:37.634850 [info] : ========== Server init ==========
+2022-06-14 21:36:37.634893 [info] : Port:9871, OpenLinger: false
+2022-06-14 21:36:37.634900 [info] : Listen Mode: ET, OpenConn Mode: ET
+2022-06-14 21:36:37.634903 [info] : LogSys level: 1
+2022-06-14 21:36:37.634907 [info] : srcDir: /home/xiaodexin/桌面/MyProject_WebServer/Resources/
+2022-06-14 21:36:37.634911 [info] : SqlConnPool num: 12, ThreadPool num: 6
+2022-06-14 21:36:37.635367 [info] : ========== Server start ==========
+2022-06-14 21:36:40.047064 [info] : Client[18](192.168.246.1:63457) in, userCount:1
+2022-06-14 21:36:40.047167 [info] : Client[18] in!
+2022-06-14 21:36:40.047182 [info] : Client[19](192.168.246.1:63713) in, userCount:2
+2022-06-14 21:36:40.047191 [info] : Client[19] in!
+2022-06-14 21:36:40.067996 [info] : Client[20](192.168.246.1:63969) in, userCount:3
+2022-06-14 21:36:40.068080 [info] : Client[20] in!
+2022-06-14 21:36:40.068137 [info] : Client[21](192.168.246.1:64225) in, userCount:4
+2022-06-14 21:36:40.068164 [info] : Client[21] in!
+2022-06-14 21:36:40.068193 [info] : Client[22](192.168.246.1:64481) in, userCount:5
+2022-06-14 21:36:40.068217 [info] : Client[22] in!
+2022-06-14 21:36:40.097465 [info] : Client[23](192.168.246.1:64737) in, userCount:6
+2022-06-14 21:36:40.098117 [info] : Client[23] in!
+2022-06-14 21:37:14.997368 [info] : Client[18] quit!
+2022-06-14 21:37:15.002804 [info] : Client[18](192.168.246.1:63457) quit, UserCount:5
+2022-06-14 21:37:15.195040 [info] : Client[20] quit!
+2022-06-14 21:37:15.195248 [info] : Client[20](192.168.246.1:63969) quit, UserCount:4
+2022-06-14 21:37:15.195299 [info] : Client[19] quit!
+2022-06-14 21:37:15.195383 [info] : Client[19](192.168.246.1:63713) quit, UserCount:3
+2022-06-14 21:37:15.195709 [info] : Client[22] quit!
+2022-06-14 21:37:15.195820 [info] : Client[22](192.168.246.1:64481) quit, UserCount:2
+2022-06-14 21:37:15.195858 [info] : Client[21] quit!
+2022-06-14 21:37:15.195932 [info] : Client[21](192.168.246.1:64225) quit, UserCount:1
+2022-06-14 21:37:15.195968 [info] : Client[23] quit!
+2022-06-14 21:37:15.196038 [info] : Client[23](192.168.246.1:64737) quit, UserCount:0
+2022-06-14 21:38:13.024215 [info] : ========== Server init ==========
+2022-06-14 21:38:13.024281 [info] : Port:9871, OpenLinger: false
+2022-06-14 21:38:13.024945 [info] : Listen Mode: ET, OpenConn Mode: ET
+2022-06-14 21:38:13.024973 [info] : LogSys level: 1
+2022-06-14 21:38:13.024977 [info] : srcDir: /home/xiaodexin/桌面/MyProject_WebServer/Resources/
+2022-06-14 21:38:13.024981 [info] : SqlConnPool num: 12, ThreadPool num: 6
+2022-06-14 21:38:13.028907 [info] : ========== Server start ==========
+2022-06-14 21:38:47.144349 [info] : Client[18](192.168.246.1:38626) in, userCount:1
+2022-06-14 21:38:47.149512 [info] : Client[18] in!
+2022-06-14 21:38:47.150145 [info] : Client[19](192.168.246.1:38882) in, userCount:2
+2022-06-14 21:38:47.151375 [info] : Client[19] in!
+2022-06-14 21:38:47.258527 [info] : Client[20](192.168.246.1:39650) in, userCount:3
+2022-06-14 21:38:47.259125 [info] : Client[20] in!
+2022-06-14 21:38:47.259375 [info] : Client[21](192.168.246.1:39906) in, userCount:4
+2022-06-14 21:38:47.259395 [info] : Client[21] in!
+2022-06-14 21:38:47.260885 [info] : Client[22](192.168.246.1:40162) in, userCount:5
+2022-06-14 21:38:47.261003 [info] : Client[22] in!
+2022-06-14 21:38:47.266202 [info] : Client[23](192.168.246.1:40418) in, userCount:6
+2022-06-14 21:38:47.266264 [info] : Client[23] in!
+2022-06-14 21:38:55.580838 [info] : Client[20] quit!
+2022-06-14 21:38:55.616769 [info] : Client[20](192.168.246.1:39650) quit, UserCount:5
+2022-06-14 21:38:55.621729 [info] : Client[18] quit!
+2022-06-14 21:38:55.622817 [info] : Client[18](192.168.246.1:38626) quit, UserCount:4
