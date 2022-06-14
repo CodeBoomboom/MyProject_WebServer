@@ -22,7 +22,7 @@
 
 class Log {
 public:
-    void init(int level, const char* path = "./log", 
+    void init(int level, const char* path = "./Log", 
                 const char* suffix =".log",
                 int maxQueueCapacity = 1024);
 

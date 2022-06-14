@@ -31,7 +31,7 @@ WebServer::WebServer(
 
     if(openLog) {
         // 初始化日志信息
-        Log::Instance()->init(logLevel, "./log", ".log", logQueSize);
+        Log::Instance()->init(logLevel, "./Log", ".log", logQueSize);
         if(isClose_) { LOG_ERROR("========== Server init error!=========="); }
         else {
             LOG_INFO("========== Server init ==========");
