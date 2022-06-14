@@ -9,14 +9,16 @@ Webserver::Webserver(
         m_epoller(new Epoller())
 {
     m_srcDir = getcwd(nullptr, 256);// 获取当前的工作路径,当前目录是/home/xiaodexin/桌面/MyProject_WebServer，也就是说只能bin/server来执行
-
+    
+    assert(m_srcDir);
+    
     strncat(m_srcDir, "/Resources",16);// 拼接资源路径,/home/xiaodexin/桌面/MyProject_WebServer/Resources
 
     HttpConn::m_userCount = 0;
     HttpConn::m_srcDir = m_srcDir;
 
     //初始化数据库连接池
-    //SqlConnPool::Instance()->Init("loaclhost", sqlport, sqlUser, sqlPwd, dbName, connPoolNum);
+    SqlConnPool::Instance()->Init("loaclhost", sqlport, sqlUser, sqlPwd, dbName, connPoolNum);
 
     //初始化事件模式
     InitEventMode(triMode);
@@ -38,7 +40,7 @@ Webserver::~Webserver()
     close(m_listenFd);
     m_isClose = true;
     free(m_srcDir);
-
+    SqlConnPool::Instance()->ClosePool();
 }
 
 
@@ -77,7 +79,10 @@ void Webserver::Start(){
             }
             else if(events & EPOLLIN)    //有数据到达，需要读
             {
-                std::cout<<"客户端有数据到达，要读，客户端fd:"<<fd<<std::endl;
+                assert(m_users.count(fd) > 0);
+                if(m_users.count(fd) > 0){
+                    std::cout<<"客户端有数据到达，要读，客户端fd:"<<fd<<std::endl;
+                }   
                 DealRead(&m_users[fd]);//处理读操作
             }
 
@@ -130,16 +135,15 @@ void Webserver::InitEventMode(int triMode){
 bool Webserver::InitSocket(){
     int ret;
     struct sockaddr_in addr;
-    if(m_port > 65535 || m_port < 1024){
-        std::cout<<"端口号过大或过小！"<<std::endl;
+    if(m_port > 65535 || m_port < 1024) {
+        // LOG_ERROR("Port:%d error!",  port_);
         return false;
     }
-
     addr.sin_family = AF_INET;
-    addr.sin_port = htons(m_port);
     addr.sin_addr.s_addr = htonl(INADDR_ANY);
-
-    struct linger optLinger = { 0 };
+    addr.sin_port = htons(m_port);
+    
+    struct linger optLinger = { 0 };  
     if(m_openLinger) {
         /* 优雅关闭: 直到所剩数据发送完毕或超时 */
         optLinger.l_onoff = 1;
@@ -147,17 +151,15 @@ bool Webserver::InitSocket(){
     }
 
     m_listenFd = socket(AF_INET, SOCK_STREAM, 0);
-    if(m_listenFd < 0){
-        std::cout<<"listenfd error"<<std::endl;
+    if(m_listenFd < 0) {
+        // LOG_ERROR("Create socket error!", port_);
         return false;
     }
 
-    //优雅关闭相关
     ret = setsockopt(m_listenFd, SOL_SOCKET, SO_LINGER, &optLinger, sizeof(optLinger));
     if(ret < 0) {
         close(m_listenFd);
-        std::cout<<"set linger error"<<std::endl;
-        //LOG_ERROR("Init linger error!", port_);
+        // LOG_ERROR("Init linger error!", port_);
         return false;
     }
 
@@ -166,39 +168,34 @@ bool Webserver::InitSocket(){
     /* 只有最后一个套接字会正常接收数据。 */
     ret = setsockopt(m_listenFd, SOL_SOCKET, SO_REUSEADDR, (const void*)&optval, sizeof(int));
     if(ret == -1) {
-        //LOG_ERROR("set socket setsockopt error !");
-        std::cout<<"set resuseaddr error"<<std::endl;
+        // LOG_ERROR("set socket setsockopt error !");
         close(m_listenFd);
         return false;
     }
 
     ret = bind(m_listenFd, (struct sockaddr *)&addr, sizeof(addr));
     if(ret < 0) {
-        //LOG_ERROR("Bind Port:%d error!", port_);
-        std::cout<<"bind error"<<std::endl;
+        // LOG_ERROR("Bind Port:%d error!", port_);
         close(m_listenFd);
         return false;
     }
 
     ret = listen(m_listenFd, 6);
     if(ret < 0) {
-        //LOG_ERROR("Listen port:%d error!", port_);
-        std::cout<<"listen error"<<std::endl;
+        // LOG_ERROR("Listen port:%d error!", port_);
         close(m_listenFd);
         return false;
     }
 
-    //添加到epoll树上
     ret = m_epoller->AddFd(m_listenFd,  m_listenFd | EPOLLIN);
     if(ret == 0) {
-        //LOG_ERROR("Add listen error!");
-        std::cout<<"add listen error"<<std::endl;
+        // LOG_ERROR("Add listen error!");
         close(m_listenFd);
         return false;
     }
     SetFdNonblock(m_listenFd);
     std::cout<<"Server port:"<<m_port<<std::endl;
-    //LOG_INFO("Server port:%d", m_port);
+    // LOG_INFO("Server port:%d", port_);
     return true;
 }
 

@@ -13,23 +13,15 @@
 #include<queue>
 #include<thread>
 #include<functional>
+#include<assert.h>
 
 class ThreadPool
 {
-private:
-    struct Pool{
-        std::mutex m_mtx;//互斥锁
-        std::condition_variable m_cond;//条件变量
-        bool m_isClose;//是否关闭
-        std::queue<std::function<void()>> m_tasks;// 队列（保存的是任务），创建了一个queue队列，里面存储的是调用形式为void()类型（返回值为void，参数为空）的可调用对象（lambda匿名函数、函数等，此处可以认为就是一个函数）
-    };
-    std::shared_ptr<Pool> m_pool;//线程池
-    
 public:
     //explicit:防止构造函数隐式转换
     //线程池初始线程数：8
     explicit ThreadPool(size_t threadCount = 8):m_pool(std::make_shared<Pool>()){////std::make_shared<Pool>是在动态内存中分配一个Pool对象并初始化它，返回指向此对象的shared_ptr智能指针
-    
+        assert(threadCount > 0);
         //循环创建子线程
         for(size_t i = 0; i< threadCount; i++){
             std::thread([pool = m_pool]{//下面是子线程要执行的代码
@@ -53,16 +45,19 @@ public:
     ThreadPool(ThreadPool&&) = default;//右值引用
     ThreadPool() = default;//无参构造函数采用默认实现
     ~ThreadPool(){
-        if(static_cast<bool>(m_pool)){
-            /*
-            lock_guard简化了 lock/unlock 的写法,
-                lock_guard在构造时自动锁定互斥量, 而在退出作用域时会析构自动解锁, 保证了上锁解锁的正确操作, 正是典型的 RAII 机制
-            */
-            std::lock_guard<std::mutex> locker(m_pool->m_mtx);//创建一个互斥锁locker，初始化为pool->mtx
-            m_pool->m_isClose = true;
+        if(static_cast<bool>(m_pool)){            
+            {
+                /*
+                lock_guard简化了 lock/unlock 的写法,
+                    lock_guard在构造时自动锁定互斥量, 而在退出作用域时会析构自动解锁, 保证了上锁解锁的正确操作, 正是典型的 RAII 机制
+                */
+                std::lock_guard<std::mutex> locker(m_pool->m_mtx);//创建一个互斥锁locker，初始化为pool->mtx
+                m_pool->m_isClose = true;
+            }
+            m_pool->m_cond.notify_all();//把所有线程都唤醒，break
         }
-        m_pool->m_cond.notify_all();//把所有线程都唤醒，break
     }
+
     template<class T>
     void AddTask(T&& task){
         {
@@ -71,6 +66,15 @@ public:
         }
         m_pool->m_cond.notify_one();// 唤醒一个等待的线程
     }
+private:
+    struct Pool{
+        std::mutex m_mtx;//互斥锁
+        std::condition_variable m_cond;//条件变量
+        bool m_isClose;//是否关闭
+        std::queue<std::function<void()>> m_tasks;// 队列（保存的是任务），创建了一个queue队列，里面存储的是调用形式为void()类型（返回值为void，参数为空）的可调用对象（lambda匿名函数、函数等，此处可以认为就是一个函数）
+    };
+    std::shared_ptr<Pool> m_pool;//线程池
+    
 };
 
 

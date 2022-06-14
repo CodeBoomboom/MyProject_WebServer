@@ -20,10 +20,13 @@
 #include<arpa/inet.h>
 #include<iostream>
 #include<memory>//unique_ptr
+#include<assert.h>
 
 #include"../Http/HttpConn.h"
 #include"Epoller.h"
 #include"../Pool/ThreadPool.h"
+#include"../Pool/SqlConnPool.h"
+#include"../Pool/SqlConnRAII.h"
 
 
 class Webserver{
