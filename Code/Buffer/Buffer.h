@@ -1,66 +1,58 @@
 /********************************************************************
 @FileName:Buffer.h
 @Version: 1.0
-@Notes:   自定义可增长的缓冲区类
+@Notes:   None
 @Author:  XiaoDexin
 @Email:   xiaodexin0701@163.com
-@Date:    2022/05/30 21:18:07
+@Date:    2022/06/14 20:51:13
 ********************************************************************/
-#ifndef _BUFFER_H_
-#define _BUFFER_H_
-
-#include<cstring>
-#include<vector>
-#include<atomic>
-#include<iostream>
-#include<unistd.h>
-#include<sys/uio.h>
-class Buffer
-{
-private:
-
-    std::vector<char> m_buffer;
-    std::atomic<std::size_t> m_readPos;// 读的位置
-    std::atomic<std::size_t> m_writePos;// 写的位置
-    
-    char* BeginPtr();   //获取内存起始位置
-    const char* BeginPtr() const;//获取内存起始位置，重载
-    void MakeSpace(size_t len);//创建空间
-    
+#ifndef BUFFER_H
+#define BUFFER_H
+#include <cstring>   //perror
+#include <iostream>
+#include <unistd.h>  // write
+#include <sys/uio.h> //readv
+#include <vector> //readv
+#include <atomic>
+#include <assert.h>
+class Buffer {
 public:
-    Buffer(int initBufferSize = 1024);
+    Buffer(int initBuffSize = 1024);
     ~Buffer() = default;
 
-    void RetrieveAll();//清空缓冲区
-    size_t WritableBytes() const;//可以写的大小
-    size_t ReadableBytes() const;//可以读的大小
-    size_t PrependadleBytes() const;//前面可以用的空间
-    const char* Peek() const;//可以读的起始元素
-    void Retrieve(size_t len);//readPos_前进（后移）len位
-    void RetrieveUntil(const char* end);//把readPos_后移到指定位置end上
-    std::string RetrieveAllToStr();//将缓冲区中数据存到string中并清空缓冲区，返回string就是缓冲区数据
-    const char* BeginWriteConst() const;//可以写的起始元素
-    char* BeginWrite();//可以写的起始元素
-    void HasWritten(size_t len);//更新写位置指针
-    void Append(const std::string &str);
-    void Append(const void* data, size_t len);
-    void Append(const char* str, size_t len);//当写的长度大于可写长度时，调用此函数，此函数的其他重载都是为了适配不同的数据类型
-    void Append(const Buffer& buff);
-    void EnsureWriteable(size_t len);//确保可写
+    size_t WritableBytes() const;//可写的字节数       
+    size_t ReadableBytes() const ;//可读的字节数
+    size_t PrependableBytes() const;//可以扩展的字节数
 
-    ssize_t ReadFd(int fd, int* Errno);
+    const char* Peek() const;
+    void EnsureWriteable(size_t len);//确保可写
+    void HasWritten(size_t len);//写进去
+
+    void Retrieve(size_t len);
+    void RetrieveUntil(const char* end);
+
+    void RetrieveAll() ;
+    std::string RetrieveAllToStr();
+
+    const char* BeginWriteConst() const;
+    char* BeginWrite();
+
+    void Append(const std::string& str);
+    void Append(const char* str, size_t len);
+    void Append(const void* data, size_t len);
+    void Append(const Buffer& buff);
+
+    ssize_t ReadFd(int fd, int* Errno); 
     ssize_t WriteFd(int fd, int* Errno);
+
+private:
+    char* BeginPtr_();              // 获取内存起始位置
+    const char* BeginPtr_() const;  // 获取内存起始位置（重载）
+    void MakeSpace_(size_t len);    // 创建空间
+
+    std::vector<char> buffer_;  // 具体装数据的vector
+    std::atomic<std::size_t> readPos_;  // 读的位置
+    std::atomic<std::size_t> writePos_; // 写的位置
 };
 
-
-
-
-
-
-
-
-
-
-
-
-#endif
+#endif //BUFFER_H
