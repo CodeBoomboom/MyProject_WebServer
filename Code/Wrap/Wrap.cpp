@@ -6,7 +6,7 @@
 @Email:   xiaodexin0701@163.com
 @Date:    2022/04/18 09:55:26
 ********************************************************************/
-#include"wrap.h"
+#include"Wrap.h"
 
 void perr_exit(const char *s)
 {

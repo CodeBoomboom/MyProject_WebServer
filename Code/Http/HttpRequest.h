@@ -16,10 +16,10 @@
 #include <errno.h>     
 #include <mysql/mysql.h>  //mysql
 
-#include "../buffer/buffer.h"
-#include "../log/log.h"
-#include "../pool/sqlconnpool.h"
-#include "../pool/sqlconnRAII.h"
+#include "../Buffer/Buffer.h"
+#include "../Log/Log.h"
+#include "../Pool/SqlConnPool.h"
+#include "../Pool/SqlConnRAII.h"
 
 class HttpRequest {
 public:

@@ -1,64 +1,52 @@
 #include "Epoller.h"
 
-//创建epoll对象
-//参数:最大事件数
-//返回值:无
-Epoller::Epoller(int maxEvent):m_epollFd(epoll_create(512)), m_events(maxEvent){} 
-
-Epoller::~Epoller()
-{
-    close(m_epollFd);
+// 创建epoll对象 epoll_create(512)
+Epoller::Epoller(int maxEvent):epollFd_(epoll_create(512)), events_(maxEvent){
+    assert(epollFd_ >= 0 && events_.size() > 0);
 }
 
-//向epoll中添加一个fd
-//参数:fd， fd的监听事件
-//返回值:成功true失败false
-bool Epoller::AddFd(int fd, uint32_t events)
-{
-    if(fd < 0)  return false;
-    epoll_event ev = {0};
-    ev.data.fd = fd;
-    ev.events = events;
-    return 0 == epoll_ctl(m_epollFd, EPOLL_CTL_ADD, fd, &ev);
+Epoller::~Epoller() {
+    close(epollFd_);
 }
 
-//修改epoll中文件描述符的监听事件
-//参数:fd，修改的事件
-//返回值:成功true失败false
-bool Epoller::ModFd(int fd, uint32_t events)
-{
+// 添加文件描述符到epoll中进行管理
+bool Epoller::AddFd(int fd, uint32_t events) {
     if(fd < 0) return false;
     epoll_event ev = {0};
     ev.data.fd = fd;
     ev.events = events;
-    return 0 == epoll_ctl(m_epollFd, EPOLL_CTL_MOD, fd, &ev);   
+    return 0 == epoll_ctl(epollFd_, EPOLL_CTL_ADD, fd, &ev);
+}
+
+// 修改
+bool Epoller::ModFd(int fd, uint32_t events) {
+    if(fd < 0) return false;
+    epoll_event ev = {0};
+    ev.data.fd = fd;
+    ev.events = events;
+    return 0 == epoll_ctl(epollFd_, EPOLL_CTL_MOD, fd, &ev);
 }
 
 // 删除
 bool Epoller::DelFd(int fd) {
     if(fd < 0) return false;
     epoll_event ev = {0};
-    return 0 == epoll_ctl(m_epollFd, EPOLL_CTL_DEL, fd, &ev);
+    return 0 == epoll_ctl(epollFd_, EPOLL_CTL_DEL, fd, &ev);
 }
 
-//调用epoll_wait进行事件检测
-//参数:延时时间
-//返回值:成功返回有多少描述符就绪，时间到时返回0，出错-1
-int Epoller::Wait(int timeoutMs)
-{
-    return epoll_wait(m_epollFd, &m_events[0], static_cast<int>(m_events.size()), timeoutMs);
+// 调用epoll_wait()进行事件检测
+int Epoller::Wait(int timeoutMs) {
+    return epoll_wait(epollFd_, &events_[0], static_cast<int>(events_.size()), timeoutMs);//static_cast<int>类型转换，转换为int
 }
 
-//获取产生事件的文件描述符
-//参数:size_t i :第i个产生事件的文件描述符
-//返回值:该文件描述符的fd
+// 获取产生事件的文件描述符
 int Epoller::GetEventFd(size_t i) const {
-    return m_events[i].data.fd;
+    assert(i < events_.size() && i >= 0);
+    return events_[i].data.fd;
 }
 
-//获取文件描述符产生的事件
-//参数:size_t i；第i个产生事件的文件描述符所产生的事件
-//返回值:无
+// 获取事件
 uint32_t Epoller::GetEvents(size_t i) const {
-    return m_events[i].events;
+    assert(i < events_.size() && i >= 0);
+    return events_[i].events;
 }
